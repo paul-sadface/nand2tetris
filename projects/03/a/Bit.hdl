@@ -13,5 +13,14 @@ CHIP Bit {
     OUT out;
 
     PARTS:
-    //// Replace this comment with your code.
+    Mux(a=rout, b=in, sel=load, out=a);
+    DFF(in=a, out=rout, out=out); // out(t) = in(t-1)
+    
+    /** To my understanding, when load = 0, the out(t+1) = out(t)
+     *  When this happens, the input to DFF and output are the same.
+     *  This is a feedback loop, and thus the out(t) is a function of in(t-1)
+     *  So in this case, because we set the output of DFF to rout, in the next tick rout = out(t-1)
+     *  Thus, when load is 0, the output of Bit should be the output from the previous tick.
+     *  Not exactly sure though; I just wrote this to hopefully understand it better.
+    */
 }

@@ -18,5 +18,23 @@ CHIP PC {
     OUT out[16];
     
     PARTS:
-    //// Replace this comment with your code.
+    // increments feedback (the output of the previous tick).
+    Inc16(in=feedback, out=incFeedback);
+    
+    // if inc, the output of Mux16 is the incremented feedback, else the unmodified feedback.
+    Mux16(a=feedback, b=incFeedback, sel=inc, out=incOut);
+    
+    // if load, the output of Mux16 is the input to be loaded in the register later. Else, the output is the incOut 
+    // (incremented or unincremented).
+    Mux16(a=incOut, b=in, sel=load, out=loadOut);
+    
+    // if reset, the output of Mux16 is 0. Else, loadOut.
+    Mux16(a=loadOut, b=false, sel=reset, out=resetOut);
+    
+    
+    // Register then loads in the output from the chain of Mux16s. If they were all 0, out(t+1) = out(t) because feedback is 
+    // out(t-1) and this is out(t). The output of this tick from register is then fed back into the beginning.
+    Register(in=resetOut, load=true, out=out, out=feedback);
+    
+    
 }
