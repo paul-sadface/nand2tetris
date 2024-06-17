@@ -13,5 +13,26 @@ CHIP RAM8 {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    
+    // Quite tough to figure out.
+    
+    // Sets load to the address corresponding to the register via a letter.
+    // The rest will be zero, continuing to hold their value.
+    // E.g. if load was true and the address was 0, the input would be loaded into the first register.
+    
+    DMux8Way(in=load, sel=address, a=a, b=b, c=c, d=d, e=e, f=f, g=g, h=h);
+    
+    // Loads or continue to hold their value.
+    Register(in=in, load=a, out=r1);
+    Register(in=in, load=b, out=r2);
+    Register(in=in, load=c, out=r3);
+    Register(in=in, load=d, out=r4);
+    Register(in=in, load=e, out=r5);
+    Register(in=in, load=f, out=r6);
+    Register(in=in, load=g, out=r7);
+    Register(in=in, load=h, out=r8);
+    
+    // The output will be the value that the register at address currently holds regardless if load is 
+    // true or false.
+    Mux8Way16(a=r1, b=r2, c=r3, d=r4, e=r5, f=r6, g=r7, h=r8, sel=address, out=out);
 }
