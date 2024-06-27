@@ -17,5 +17,10 @@ CHIP Computer {
     IN reset;
 
     PARTS:
-    //// Replace this comment with your code.
+    // The CPU receives instructions from ROM32K. After the CPU computes it, PC is incremented or jumped
+    // and inputted into ROM32K which outputs the next instruction.
+    // Then, the outputs from the CPU are inputted into Memory which may load in a new value depending on writeM.
+    CPU(inM=inM, instruction=instruction, reset=reset, outM=outM, writeM=writeM, addressM=addressM, pc=pc);
+    ROM32K(address=pc, out=instruction);
+    Memory(in=outM, load=writeM, address=addressM, out=inM);
 }

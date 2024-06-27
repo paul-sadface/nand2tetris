@@ -19,5 +19,21 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    /** 
+     * if address[14] is 0, then the maximum address that bits[0..13] can represent is 16383 so we want
+     * to put the load input to loadRAM while loadScreen is 0. If address[14] is 1, then the minumun
+     * address can represent is 16384. That means we want to put the load input into loadScreen.
+     */
+    DMux(in=load, sel=address[14], a=loadRAM, b=loadScreen);
+    
+    // Use either loadRAM or loadScreen to get outputs of RAM16K and Screen
+    RAM16K(in=in, load=loadRAM, address=address[0..13], out=RAMout);
+    
+    // Since Screen functions as a 8K RAM, only use the first 13 bits of address
+    Screen(in=in, load=loadScreen, address=address[0..12], out=ScreenOut);
+    Keyboard(out=KeyboardOut);
+    
+    // Select the desired output based on the first 2 bits of address
+    Mux4Way16(a=RAMout, b=RAMout, c=ScreenOut, d=KeyboardOut, sel=address[13..14], out=out);
+    
 }

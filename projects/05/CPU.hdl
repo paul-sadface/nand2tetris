@@ -32,5 +32,65 @@ CHIP CPU {
         pc[15];          // Address of next instruction
 
     PARTS:
-    //// Replace this comment with your code.
+    // i  _  _  a  c1 c2 c3 c4 c5 c6 d1 d2 d3 j1 j2 j3
+    // 15 14 13 12 11 10 09 08 07 06 05 04 03 02 01 00
+    
+    
+    // if AInstruction == 1, it is A instruction (write the input into the A register)
+    // Else, it is a C instruction and we need to compute the specified instruction.
+    Not(in=instruction[15], out=AInstruction);
+    
+    Or(a=AInstruction, b=instruction[5], out=loadA);
+    And(a=instruction[15], b=instruction[4], out=loadD);
+    And(a=instruction[15], b=instruction[3], out=writeM);
+    
+    // If it is an A instruction, load the instruction into the A register. E.g. @5 = 0000 0000 0000 0101
+    // Else, the input to the A Register is the output of the ALU chip. E.g. A=D+1 where the output of 
+    // D+1 from the ALU chip is loaded into the A depending on loadA (instruction[5]) above.
+    Mux16(a=instruction, b=ALUOut, sel=instruction[15], out=ARegisterInput);
+    ARegister(in=ARegisterInput, load=loadA, out=ARegisterOut, out[0..14]=addressM);
+    
+    // The 'a' part of the C instruction specifies if A or M should be the input to the ALU chip.
+    // It is at instruction[12] and we see that inM is the value M.
+    // See the Hack language specification.
+    Mux16(a=ARegisterOut, b=inM, sel=instruction[12], out=AorM);
+    
+    // The input of the DRegister is the output from the ALU chip. This is for cases like D=M+1 where
+    // the D register loads ALUOut. We check whether or not to load from loadD.
+    DRegister(in=ALUOut, load=loadD, out=DRegisterOut);
+    
+    // Here, the inputs are the output of the DRegister and AorM depending on the bit 'a' (instruction[12]).
+    // Also, the bits from 6 to 11 specify the operation of the ALU chip.
+    // In addition, it's important that we get the values zr and ng to use later depending on the jump conditions
+    ALU(x=DRegisterOut, y=AorM, 
+    	zx=instruction[11], 
+    	nx=instruction[10],
+        zy=instruction[9],
+        ny=instruction[8],
+        f=instruction[7],
+        no=instruction[6],
+        out=ALUOut,
+        out=outM,
+        zr=zr,
+        ng=ng);
+    
+    // See whether or not the output matches the jump conditions. First check if it's greater than , not equal, and greater than or equal.
+    Not(in=ng, out=gt0);
+    Not(in=zr, out=n0);
+    And(a=gt0, b=n0, out=gteq0);
+    
+    // Check if any conditions matches the jump conditions (see hack language specification)
+    And(a=gteq0, b=instruction[0], out=isGTEQ0);
+    And(a=zr, b=instruction[1], out=isEQ0);
+    And(a=ng, b=instruction[2], out=isLT0);
+    
+    // Carry it through
+    Or(a=isGTEQ0, b=isEQ0, out=jump0);
+    Or(a=jump0, b=isLT0, out=jump1);
+    
+    // Only jump if it is a C instruction
+    And(a=jump1, b=instruction[15], out=jump);
+    
+    // If jump is true, load the ARegister into PC. Else, increment the counter already stored in PC
+    PC(in=ARegisterOut, load=jump, inc=true, reset=reset, out[0..14]=pc);
 }
