@@ -1,1 +1,1 @@
-In progress, finished project 03. Currently on 04. I have also included some explanations for some of the more complicated chips. E.g. PC.hdl in project 03.
+In progress. I have finished project 06 and am currently on 07. Many of the more complicated chips have comments hopefully explaining them if you need help. E.g. the CPU chip.
