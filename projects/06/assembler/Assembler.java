@@ -19,7 +19,9 @@ public class Assembler{
         parser.firstPass();
         parser.secondPass();
 
-        
+        // Runs the test to compare the original Pong.hack file vs my (PongP.hack) file
+        // Fully workds and is identical to the oriiginal provided assembler.
+        //Tests.testAssemberComparePong();
         
         
     }

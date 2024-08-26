@@ -7,6 +7,7 @@ import java.nio.file.*;
 
 public class Parser {
     public static int lineNum;
+    public int numStaticVars;
     private File file;
     private SymbolTable symbolTable;
     private String tempFile;
@@ -21,6 +22,7 @@ public class Parser {
         lineNum = 0;
         file = new File(fileName);
         symbolTable = new SymbolTable();
+        numStaticVars = 0;
     }
 
     // returns true if the line is a comment. E.g. "//this is a comment"
@@ -162,14 +164,9 @@ public class Parser {
                         } else if (aVar.charAt(0) == 'R'){
                             line = "@" + aVar;
                         } else if (!Character.isDigit(aVar.charAt(0)) && !symbolTable.isSymbol(aVar)){ // handles static variables
-                            for (int i = 16; i < 255; i++){
-                                if (!symbolTable.isSymbolByIndex(Integer.toString(i))){
-                                    // don't think I need to static variables to the symbol table since I replace them with the correct RAM address but just in case
-                                    symbolTable.add(aVar, i);
-                                    line = "@" + i;
-                                    break;
-                                }
-                            }
+                            symbolTable.add(aVar, numStaticVars + 16);
+                            line = "@" + (numStaticVars + 16);
+                            numStaticVars += 1;
                         } else {
                             line = "@" + aVar;
                         }
@@ -181,7 +178,9 @@ public class Parser {
             }
             tempWriter.close();
             replaceReader.close();
-            System.out.println(symbolTable.toString());
+
+            // just testing the SymbolTable.
+            // System.out.println(symbolTable.toString());
         
         } catch (IOException e) {
             e.printStackTrace();

@@ -63,5 +63,9 @@ public class SymbolTable {
         }
         return false;
     }
+
+    public int getNumSymbols(){
+        return indexes.size();
+    }
         
 }

@@ -1,0 +1,35 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Pongtest",
+            "request": "launch",
+            "mainClass": "Pongtest",
+            "projectName": "nand2tetris_f0de8ba5"
+        },
+        {
+            "type": "java",
+            "name": "a",
+            "request": "launch",
+            "mainClass": "a",
+            "projectName": "nand2tetris_f0de8ba5"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Assembler",
+            "request": "launch",
+            "mainClass": "Assembler",
+            "projectName": "nand2tetris_f0de8ba5"
+        }
+    ]
+}

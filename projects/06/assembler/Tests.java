@@ -1,5 +1,9 @@
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.File;
 
 // Some simple tests
 public class Tests {
@@ -87,6 +91,31 @@ public class Tests {
         assertEquals("256", Processor.getAVar(line));
     }
 
-    
+    public static void testAssemberComparePong() throws IOException{
+        String original = System.getProperty("user.dir") + "/projects/06/pong/Pong.hack";
+        String mine = System.getProperty("user.dir") + "/projects/06/pong/PongP.hack";
+
+        File fo = new File(original);
+        File fm = new File(mine);
+
+        BufferedReader o = new BufferedReader(new FileReader(fo));
+        BufferedReader m = new BufferedReader(new FileReader(fm));
+
+        String lineO = o.readLine();
+        String lineM = m.readLine();
+        int count = 0;
+        while (lineO != null && lineM != null){
+            if (!lineO.equals(lineM)){
+                System.out.println("Original: " + lineO);
+                System.out.println("Mine: " + lineM);
+                System.out.println("Line num: " + count);
+            }
+            lineO = o.readLine();
+            lineM = m.readLine();
+            count ++;
+        }
+        o.close();
+        m.close();
+    }
     
 }
